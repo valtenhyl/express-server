@@ -76,7 +76,7 @@ app.get('/api/users', (req, res) => {
       'code': 200,
       'data|10-30': [{
           'id|+1': 1000,
-          'age|18-24': 15,
+          'age|18-24': 18,
           'gender|1': ['0', '1'],
           'email': '@email',
           'phone': /(13|14|15|18|17)[0-9]{9}/,
@@ -94,7 +94,7 @@ app.get('/api/user/:id', (req, res) => {
       'code': 200,
       'data': {
           'id|+1': id,
-          'age|18-24': 15,
+          'age|18-24': 18,
           'gender|1': ['0', '1'],
           'email': '@email',
           'phone': /(13|14|15|18|17)[0-9]{9}/,
@@ -108,5 +108,5 @@ app.get('/api/user/:id', (req, res) => {
 
 // 启动监听
 app.listen(3000, () => {
-  console.log('running...')
+  console.log("running...  http://localhost:3000")
 })
