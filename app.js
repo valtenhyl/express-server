@@ -1,6 +1,8 @@
-const express = require('express')
-const app = express()
-const bodyParser = require('body-parser')
+const express = require('express') // 引入express
+const app = express()              // 实例化express
+const bodyParser = require('body-parser')   // 引入body-parser
+const Mock = require('mockjs')              // 引入Mokcjs
+
 // 设置静态资源目录，表示所有的请求使用静态资源目录，浏览器访问时，先访问此目录，“public”表示当前服务器的public目录
 app.use(express.static('public'))
 // 处理参数
@@ -16,9 +18,13 @@ app.all('*', function (req, res, next) {
   res.header('Access-Control-Allow-Headers', 'mytoken');
   next();
 });
+
+// http://localhost:3000/async1
 app.get('/async1', (req, res) => {
   res.send('hello1')
 })
+
+// http://localhost:3000/async2?info=hello
 app.get('/async2', (req, res) => {
   if (req.query.info == 'hello') {
     res.send('world')
@@ -26,34 +32,7 @@ app.get('/async2', (req, res) => {
     res.send('error')
   }
 })
-
-app.get('/adata', (req, res) => {
-  res.send('Hello axios!')
-})
-app.get('/axios', (req, res) => {
-  res.send('axios get 传递参数' + req.query.id)
-})
-app.get('/axios/:id', (req, res) => {
-  res.send('axios get (Restful) 传递参数' + req.params.id)
-})
-app.delete('/axios', (req, res) => {
-  res.send('axios get 传递参数' + req.query.id)
-})
-app.post('/axios', (req, res) => {
-  res.send('axios post 传递参数' + req.body.uname + '---' + req.body.pwd)
-})
-app.put('/axios/:id', (req, res) => {
-  res.send('axios put 传递参数' + req.params.id + '---' + req.body.uname + '---' + req.body.pwd)
-})
-
-app.get('/axios-json', (req, res) => {
-  res.json({
-    uname: 'lisi',
-    age: 12
-  });
-})
-
-
+// 不同请求方式，获取参数
 app.get('/fdata', (req, res) => {
   res.send('Hello Fetch!')
 })
@@ -73,6 +52,14 @@ app.put('/books/:id', (req, res) => {
   res.send('PUT请求传递参数!' + req.params.id + '---' + req.body.uname + '---' + req.body.pwd)
 })
 
+// 定时返回
+app.get('/data1', (req, res) => {
+  setTimeout(function () {
+    res.send('Hello TOM!')
+  }, 1000);
+})
+
+// 返回json
 app.get('/json', (req, res) => {
   res.json({
     uname: 'lisi',
@@ -81,34 +68,43 @@ app.get('/json', (req, res) => {
   });
 })
 
-app.get('/a1', (req, res) => {
-  setTimeout(function () {
-    res.send('Hello TOM!')
-  }, 1000);
-})
-app.get('/a2', (req, res) => {
-  setTimeout(function () {
-    res.send('Hello JERRY!')
-  }, 2000);
-})
-app.get('/a3', (req, res) => {
-  setTimeout(function () {
-    res.send('Hello SPIKE!')
-  }, 3000);
+// 使用Mock生成动态数据 需要引入 mockjs 
+// const Mock = require('mockjs');
+// 获取用户列表
+app.get('/api/users', (req, res) => {
+  res.json(Mock.mock({
+      'code': 200,
+      'data|10-30': [{
+          'id|+1': 1000,
+          'age|18-24': 15,
+          'gender|1': ['0', '1'],
+          'email': '@email',
+          'phone': /(13|14|15|18|17)[0-9]{9}/,
+          'birthday': '@date(yy-mm-dd)',
+          'address': '@county(true)',
+          'desc': '@cparagraph'
+      }]        
+  }));
 })
 
-// 路由
-app.get('/data', (req, res) => {
-  res.send('Hello World!')
+// 根据id获取用户信息
+app.get('/api/user/:id', (req, res) => {
+  const { id } = req.params
+  res.json(Mock.mock({
+      'code': 200,
+      'data': {
+          'id|+1': id,
+          'age|18-24': 15,
+          'gender|1': ['0', '1'],
+          'email': '@email',
+          'phone': /(13|14|15|18|17)[0-9]{9}/,
+          'birthday': '@date(yy-mm-dd)',
+          'address': '@county(true)',
+          'desc': '@cparagraph'
+      }        
+  }));
 })
-app.get('/data1', (req, res) => {
-  setTimeout(function () {
-    res.send('Hello TOM!')
-  }, 1000);
-})
-app.get('/data2', (req, res) => {
-  res.send('Hello JERRY!')
-})
+
 
 // 启动监听
 app.listen(3000, () => {
